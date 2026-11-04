@@ -14,4 +14,4 @@ public class Home_Fenster {
         // Fenster sichtbar machen (standardmäßig unsichtbar)
         fenster.setVisible(true);
     }
-}
+} //test
