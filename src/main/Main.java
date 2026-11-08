@@ -1,6 +1,5 @@
 package main;
 import core.GamePanel;
-import core.MainMenu;
 
 import javax.swing.*;
 
