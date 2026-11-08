@@ -1,16 +1,17 @@
 package main;
+import core.GamePanel;
+import core.MainMenu;
 
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 public class Main {
-    public static void main(String[] args) {
+    void main() {
 
         SwingUtilities.invokeLater(() -> {
 
-            JFrame window = new JFrame("Gauntlet");
+            JFrame window = new JFrame("Mini-Games");
 
-            window.setSize(800, 600);
+            window.setSize(1200, 1000);
             window.setDefaultCloseOperation(
                     JFrame.EXIT_ON_CLOSE
             );
@@ -25,6 +26,4 @@ public class Main {
             window.setVisible(true);
         });
     }
-}
-
 }
