@@ -1,208 +1,169 @@
-package core;
 
-import javax.swing.*;
-import java.awt.*;
+package core; // Ordnet die Klasse demselben Package wie Main und GamePanel zu.
 
-public class MainMenu extends JPanel {
+import javax.swing.*; // Importiert Swing-Komponenten wie JPanel, JButton und JLabel.
+import javax.swing.border.EmptyBorder; // Ermöglicht uns, Innenabstände für Komponenten festzulegen.
+import javax.swing.border.LineBorder; // Ermöglicht uns, eine einfache farbige Umrandung zu erstellen.
+import java.awt.*; // Importiert grafische Funktionen wie Farben, Schriftarten und Layouts.
+import java.awt.image.BufferedImage; // Ermöglicht uns, Bilder zu laden und auf eine bestimmte Größe zu skalieren.
+import java.io.IOException; // Wird benötigt, um mögliche Fehler beim Laden von Bildern abzufangen.
+import java.net.URL; // Ermöglicht uns, die Speicheradresse unserer eingebundenen Bilder zu erhalten.
+import javax.imageio.ImageIO; // Importiert die Funktionalität zum Einlesen von PNG- und anderen Bilddateien.
 
-    public MainMenu(Runnable survivalAction,
-                    Runnable pvpAction,
-                    Runnable quitAction) {
+public class MainMenu extends JPanel { // MainMenu ist ein eigenes Panel, das ausschließlich unsere Startseite darstellt.
 
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+    private static final Color BACKGROUND_COLOR = new Color(13, 13, 25); // Speichert die dunkle Hintergrundfarbe, die wir im gesamten Menü verwenden.
+    private static final Color BUTTON_COLOR = new Color(30, 32, 55); // Speichert die Hintergrundfarbe unserer großen Modus-Buttons.
+    private static final Color ACCENT_COLOR = new Color(100, 220, 180); // Speichert eine Akzentfarbe für Umrandungen und Retro-Details.
+    private static final Color TEXT_COLOR = new Color(235, 235, 245); // Speichert die helle Textfarbe für gute Lesbarkeit.
 
-        // Titel
-        JLabel title = new JLabel("MINI-GAMES");
-        title.setFont(new Font("Arial", Font.BOLD, 65));
-        title.setForeground(Color.WHITE);
-        title.setAlignmentX(Component.CENTER_ALIGNMENT);
+    public MainMenu(Runnable survivalAction, Runnable pvpAction, Runnable quitAction) { // Konstruktor: Wird aufgerufen, wenn GamePanel eine neue Startseite erstellt; die drei Aktionen kommen von GamePanel.
 
-        JLabel subtitle = new JLabel("MAIN MENU");
-        subtitle.setFont(new Font("Arial", Font.PLAIN, 17));
-        subtitle.setForeground(new Color(170, 170, 190));
-        subtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS)); // Ordnet die Bestandteile der Startseite vertikal untereinander an.
+        setBorder(new EmptyBorder(40, 40, 40, 40)); // Fügt einen Innenabstand hinzu, damit die Elemente nicht direkt am Fensterrand liegen.
+        setBackground(BACKGROUND_COLOR); // Legt die Hintergrundfarbe des Panels fest.
 
-        // Große Modus-Buttons
-        JButton survivalButton = createModeButton(
-                "SURVIVAL",
-                new MenuIcon(MenuIcon.Type.MAP)
-        );
+        JLabel title = new JLabel("MINI-GAMES"); // Erstellt die Überschrift unserer Startseite.
+        title.setFont(new Font("Monospaced", Font.BOLD, 72)); // Verwendet eine dicke Monospace-Schrift in großer Größe für den Retro-Look.
+        title.setForeground(ACCENT_COLOR); // Färbt den Titel in unserer Akzentfarbe.
+        title.setAlignmentX(Component.CENTER_ALIGNMENT); // Zentriert den Titel horizontal innerhalb des vertikalen Layouts.
 
-        JButton pvpButton = createModeButton(
-                "PVP / MULTIPLAYER",
-                new MenuIcon(MenuIcon.Type.PVP)
-        );
+        JLabel subtitle = new JLabel("SELECT YOUR GAME MODE"); // Erstellt einen Untertitel, der dem Spieler die Auswahl erklärt.
+        subtitle.setFont(new Font("Monospaced", Font.PLAIN, 19)); // Verwendet eine kleinere Monospace-Schrift für den Untertitel.
+        subtitle.setForeground(TEXT_COLOR); // Setzt die Textfarbe des Untertitels.
+        subtitle.setAlignmentX(Component.CENTER_ALIGNMENT); // Zentriert den Untertitel horizontal.
 
-        survivalButton.addActionListener(e -> survivalAction.run());
-        pvpButton.addActionListener(e -> pvpAction.run());
+        JButton survivalButton = createModeButton( // Erstellt den großen Button für den Survival-Modus.
+                "SURVIVAL", // Legt den Namen fest, der auf dem Button angezeigt wird.
+                "Fight your way to the final boss", // Beschreibt kurz das Ziel des Survival-Modus.
+                "/images/survival.png" // Gibt den Pfad zum Survival-Bild im Ressourcenordner an.
+        ); // Beendet den Aufruf der Methode createModeButton.
 
-        // Buttons nebeneinander anordnen
-        JPanel modesPanel = new JPanel(new FlowLayout(
-                FlowLayout.CENTER, 35, 0
-        ));
+        JButton pvpButton = createModeButton( // Erstellt den großen Button für den Mehrspieler-Modus.
+                "PVP / MULTIPLAYER", // Legt den Namen des zweiten Buttons fest.
+                "Challenge another player", // Beschreibt kurz, worum es im PvP-Modus geht.
+                "/images/pvp.png" // Gibt den Pfad zum PvP-Bild im Ressourcenordner an.
+        ); // Beendet den Aufruf der Methode createModeButton.
 
-        modesPanel.setOpaque(false);
-        modesPanel.add(survivalButton);
-        modesPanel.add(pvpButton);
+        survivalButton.addActionListener(e -> survivalAction.run()); // Führt die von GamePanel übergebene Survival-Aktion aus, wenn der Spieler diesen Button anklickt.
+        pvpButton.addActionListener(e -> pvpAction.run()); // Führt die von GamePanel übergebene PvP-Aktion aus, wenn der Spieler diesen Button anklickt.
 
-        // Kleiner Quit-Button
-        JButton quitButton = new JButton("QUIT");
-        quitButton.setFont(new Font("Arial", Font.BOLD, 14));
-        quitButton.setForeground(Color.LIGHT_GRAY);
-        quitButton.setBackground(new Color(45, 45, 65));
-        quitButton.setFocusPainted(false);
-        quitButton.setBorderPainted(false);
-        quitButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        quitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JPanel modesPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 0)); // Erstellt ein eigenes Panel, das die beiden Modus-Buttons horizontal nebeneinander anordnet.
+        modesPanel.setOpaque(false); // Macht den Hintergrund dieses Panels durchsichtig, damit der Hintergrund von MainMenu sichtbar bleibt.
+        modesPanel.add(survivalButton); // Fügt den Survival-Button links in das Panel ein.
+        modesPanel.add(pvpButton); // Fügt den PvP-Button rechts neben dem Survival-Button ein.
+        modesPanel.setAlignmentX(Component.CENTER_ALIGNMENT); // Zentriert das gesamte Button-Panel innerhalb der Startseite.
 
-        quitButton.setPreferredSize(new Dimension(130, 38));
-        quitButton.setMaximumSize(new Dimension(130, 38));
+        JButton quitButton = new JButton("QUIT"); // Erstellt den kleineren Button zum Beenden des Spiels.
+        quitButton.setFont(new Font("Monospaced", Font.BOLD, 16)); // Verwendet eine fette Monospace-Schrift für den Quit-Button.
+        quitButton.setForeground(TEXT_COLOR); // Legt die helle Schriftfarbe des Quit-Buttons fest.
+        quitButton.setBackground(new Color(45, 35, 50)); // Gibt dem Quit-Button einen dunklen, leicht rötlichen Hintergrund.
+        quitButton.setFocusPainted(false); // Entfernt den standardmäßigen Fokusrahmen von Swing.
+        quitButton.setBorder(new LineBorder(new Color(130, 75, 85), 2)); // Zeichnet einen zwei Pixel breiten Rand um den Quit-Button.
+        quitButton.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Ändert den Mauszeiger in eine Hand, wenn man über den Button fährt.
+        quitButton.setAlignmentX(Component.CENTER_ALIGNMENT); // Zentriert den Quit-Button horizontal.
 
-        quitButton.addActionListener(e -> quitAction.run());
+        quitButton.setPreferredSize(new Dimension(160, 45)); // Legt die bevorzugte Größe des Quit-Buttons fest.
+        quitButton.setMaximumSize(new Dimension(160, 45)); // Verhindert, dass der Button durch das Layout größer gezogen wird.
 
-        // Elemente anordnen
-        add(Box.createVerticalGlue());
+        quitButton.addActionListener(e -> quitAction.run()); // Führt die von GamePanel übergebene Beenden-Aktion aus, wenn der Spieler den Button anklickt.
 
-        add(title);
-        add(Box.createVerticalStrut(10));
-        add(subtitle);
+        add(Box.createVerticalGlue()); // Fügt flexiblen freien Platz oberhalb der Elemente ein, damit der Inhalt vertikal zentriert wird.
+        add(title); // Fügt den Titel zur Startseite hinzu.
+        add(Box.createVerticalStrut(15)); // Fügt einen festen Abstand von 15 Pixeln unterhalb des Titels ein.
+        add(subtitle); // Fügt den Untertitel unter dem Titel ein.
+        add(Box.createVerticalStrut(85)); // Fügt einen größeren Abstand zwischen Überschrift und Modus-Auswahl ein.
+        add(modesPanel); // Fügt beide großen Modus-Buttons nebeneinander zur Startseite hinzu.
+        add(Box.createVerticalStrut(45)); // Fügt Abstand zwischen den Modus-Buttons und dem Quit-Button ein.
+        add(quitButton); // Fügt den Quit-Button unterhalb der beiden Modus-Buttons ein.
+        add(Box.createVerticalGlue()); // Fügt flexiblen freien Platz unterhalb der Elemente ein, um sie vertikal zu zentrieren.
+    } // Beendet den Konstruktor von MainMenu.
 
-        add(Box.createVerticalStrut(65));
+    private JButton createModeButton(String title, String description, String imagePath) { // Hilfsmethode: Erstellt einen einheitlich gestalteten Button für einen Spielmodus.
 
-        add(modesPanel);
+        ImageIcon icon = loadImageIcon(imagePath, 150, 150); // Lädt das jeweilige PNG-Bild und skaliert es auf 150 x 150 Pixel.
 
-        add(Box.createVerticalStrut(35));
-        add(quitButton);
+        String buttonText = "<html><div style='text-align:center'>" + title // Beginnt einen HTML-Text, damit Titel und Beschreibung untereinander angezeigt werden.
+                + "<br><br><font size='3' color='#B8C2D8'>" + description // Fügt unter dem Titel die kleinere Beschreibung in einer hellgrauen Farbe ein.
+                + "</font></div></html>"; // Beendet die HTML-Formatierung des Button-Textes.
 
-        add(Box.createVerticalGlue());
-    }
+        JButton button = new JButton(buttonText, icon); // Erstellt einen Button, der sowohl den Text als auch das geladene Bild enthält.
 
-    // Erstellt einen großen Modus-Button
-    private JButton createModeButton(String title,
-                                     Icon icon) {
+        button.setFont(new Font("Monospaced", Font.BOLD, 20)); // Legt die Retro-Schriftart und die Schriftgröße des Button-Titels fest.
+        button.setForeground(TEXT_COLOR); // Legt die Textfarbe des Buttons fest.
+        button.setBackground(BUTTON_COLOR); // Legt die dunkle Hintergrundfarbe des Buttons fest.
+        button.setFocusPainted(false); // Entfernt den standardmäßigen Fokusrahmen.
+        button.setContentAreaFilled(true); // Sorgt dafür, dass der Hintergrund des Buttons gezeichnet wird.
+        button.setBorder(new LineBorder(ACCENT_COLOR, 3)); // Gibt dem Button eine auffällige, kantige Akzent-Umrandung.
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Zeigt eine Hand als Mauszeiger, wenn der Spieler über den Button fährt.
 
-        JButton button = new JButton(title, icon);
+        button.setVerticalTextPosition(SwingConstants.BOTTOM); // Platziert den Text unterhalb des Bildes.
+        button.setHorizontalTextPosition(SwingConstants.CENTER); // Zentriert den Text horizontal unter dem Bild.
+        button.setIconTextGap(20); // Legt den Abstand zwischen Bild und Text fest.
 
-        button.setFont(new Font("Arial", Font.BOLD, 21));
-        button.setForeground(Color.WHITE);
-        button.setBackground(new Color(45, 48, 78));
+        button.setPreferredSize(new Dimension(390, 390)); // Legt die bevorzugte Größe der großen Modus-Buttons fest.
+        button.setMaximumSize(new Dimension(390, 390)); // Verhindert, dass die Buttons durch das Layout größer werden.
 
-        button.setFocusPainted(false);
-        button.setBorderPainted(false);
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        return button; // Gibt den fertig gestalteten Button zurück, damit der Konstruktor ihn verwenden kann.
+    } // Beendet die Methode createModeButton.
 
-        // Icon oberhalb des Textes
-        button.setVerticalTextPosition(SwingConstants.BOTTOM);
-        button.setHorizontalTextPosition(SwingConstants.CENTER);
-        button.setIconTextGap(20);
+    private ImageIcon loadImageIcon(String imagePath, int width, int height) { // Hilfsmethode: Lädt ein Bild aus dem Ressourcenordner und skaliert es für einen Button.
 
-        button.setPreferredSize(new Dimension(320, 250));
-        button.setMaximumSize(new Dimension(320, 250));
+        URL imageURL = getClass().getResource(imagePath); // Sucht die Bilddatei anhand ihres Pfades im Ressourcenordner des Projekts.
 
-        return button;
-    }
+        if (imageURL == null) { // Prüft, ob die angegebene Bilddatei überhaupt gefunden wurde.
+            System.err.println("Bild konnte nicht gefunden werden: " + imagePath); // Gibt eine Fehlermeldung in der Konsole aus, wenn der Pfad falsch ist.
+            return null; // Gibt kein Icon zurück, damit das Programm trotz fehlendem Bild weiterlaufen kann.
+        } // Beendet die Überprüfung auf einen fehlenden Bildpfad.
 
-    // Hintergrund
-    @Override
-    protected void paintComponent(Graphics g) {
+        try { // Beginnt einen try-Block, um mögliche Fehler beim Einlesen des Bildes abzufangen.
 
-        super.paintComponent(g);
+            BufferedImage originalImage = ImageIO.read(imageURL); // Liest die Bilddatei ein und speichert sie als BufferedImage.
 
-        Graphics2D g2 = (Graphics2D) g;
+            if (originalImage == null) { // Prüft, ob die Datei ein unterstütztes Bildformat enthält.
+                System.err.println("Datei ist kein lesbares Bild: " + imagePath); // Gibt eine Fehlermeldung aus, falls die Datei nicht als Bild gelesen werden kann.
+                return null; // Gibt kein Icon zurück, damit das Programm nicht wegen eines ungültigen Bildes abstürzt.
+            } // Beendet die Überprüfung des Bildformats.
 
-        GradientPaint gradient = new GradientPaint(
-                0, 0, new Color(15, 15, 30),
-                getWidth(), getHeight(), new Color(40, 35, 75)
-        );
+            BufferedImage scaledImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB); // Erstellt ein neues Bild mit der gewünschten Größe und unterstützt Transparenz.
 
-        g2.setPaint(gradient);
-        g2.fillRect(0, 0, getWidth(), getHeight());
-    }
-}
+            Graphics2D g2 = scaledImage.createGraphics(); // Erstellt ein Zeichenwerkzeug, mit dem wir das Originalbild in das neue Bild übertragen können.
 
+            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR); // Verwendet Pixel-nearest-neighbor-Skalierung, damit Pixel-Art beim Vergrößern scharf und kantig bleibt.
 
-// Eigene Icons für die Spielmodi
-class MenuIcon implements Icon {
+            g2.drawImage(originalImage, 0, 0, width, height, null); // Zeichnet das Originalbild in der neuen Größe auf das skalierte Bild.
 
-    enum Type {
-        MAP,
-        PVP
-    }
+            g2.dispose(); // Gibt die Zeichenressourcen frei, nachdem das Bild fertig skaliert wurde.
 
-    private Type type;
+            return new ImageIcon(scaledImage); // Erstellt ein Swing-Icon aus dem skalierten Bild und gibt es an den Button zurück.
 
-    public MenuIcon(Type type) {
-        this.type = type;
-    }
+        } catch (IOException e) { // Fängt Fehler ab, die beim Einlesen der Bilddatei auftreten können.
+            System.err.println("Fehler beim Laden des Bildes: " + imagePath); // Gibt aus, welches Bild nicht geladen werden konnte.
+            e.printStackTrace(); // Gibt technische Informationen zum Fehler in der Konsole aus, die beim Debuggen helfen.
+            return null; // Gibt kein Icon zurück, damit das restliche Menü trotzdem angezeigt werden kann.
+        } // Beendet den try-catch-Block.
+    } // Beendet die Methode loadImageIcon.
 
-    @Override
-    public int getIconWidth() {
-        return 110;
-    }
+    @Override // Kennzeichnet, dass wir eine vorhandene Methode aus JPanel überschreiben.
+    protected void paintComponent(Graphics g) { // Wird von Swing aufgerufen, wenn der Hintergrund dieses Panels gezeichnet werden muss.
 
-    @Override
-    public int getIconHeight() {
-        return 110;
-    }
+        super.paintComponent(g); // Führt zunächst die normale Hintergrund-Zeichenroutine von JPanel aus.
 
-    @Override
-    public void paintIcon(Component c, Graphics g,
-                          int x, int y) {
+        Graphics2D g2 = (Graphics2D) g.create(); // Erstellt eine eigene Zeichenkopie, damit unsere Zeichenänderungen andere Komponenten nicht beeinflussen.
 
-        Graphics2D g2 = (Graphics2D) g.create();
+        g2.setColor(BACKGROUND_COLOR); // Legt die Hintergrundfarbe fest.
+        g2.fillRect(0, 0, getWidth(), getHeight()); // Füllt die gesamte Fläche des Panels mit der Hintergrundfarbe.
 
-        g2.setRenderingHint(
-                RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON
-        );
+        g2.setColor(new Color(35, 40, 60)); // Legt eine dezente Farbe für das Hintergrundraster fest.
 
-        if (type == Type.MAP) {
-            drawMap(g2, x, y);
-        } else {
-            drawPlayers(g2, x, y);
-        }
+        for (int x = 0; x < getWidth(); x += 40) { // Durchläuft die horizontale Fläche des Panels in Abständen von 40 Pixeln.
+            g2.drawLine(x, 0, x, getHeight()); // Zeichnet an jeder Position eine senkrechte Rasterlinie.
+        } // Beendet die Schleife für die senkrechten Linien.
 
-        g2.dispose();
-    }
+        for (int y = 0; y < getHeight(); y += 40) { // Durchläuft die vertikale Fläche des Panels in Abständen von 40 Pixeln.
+            g2.drawLine(0, y, getWidth(), y); // Zeichnet an jeder Position eine waagerechte Rasterlinie.
+        } // Beendet die Schleife für die waagerechten Linien.
 
-    // Survival: Weg mit Stationen und Boss am Ende
-    private void drawMap(Graphics2D g, int x, int y) {
-
-        g.setStroke(new BasicStroke(
-                5, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND
-        ));
-
-        // Verbindung zwischen den Stationen
-        g.setColor(new Color(130, 145, 190));
-
-        g.drawLine(x + 20, y + 85, x + 45, y + 65);
-        g.drawLine(x + 45, y + 65, x + 65, y + 45);
-        g.drawLine(x + 65, y + 45, x + 88, y + 25);
-
-        // Normale Stationen
-        g.setColor(new Color(90, 180, 210));
-
-        g.fillOval(x + 12, y + 77, 16, 16);
-        g.fillOval(x + 37, y + 57, 16, 16);
-        g.fillOval(x + 57, y + 37, 16, 16);
-
-        // Boss-Station
-        g.setColor(new Color(220, 75, 75));
-        g.fillOval(x + 77, y + 14, 25, 25);
-    }
-
-    // PvP: Zwei Spieler
-    private void drawPlayers(Graphics2D g, int x, int y) {
-
-        // Linker Spieler
-        g.setColor(new Color(90, 170, 230));
-        g.fillOval(x + 17, y + 20, 32, 32);
-        g.fillRoundRect(x + 10, y + 55, 48, 38, 15, 15);
-
-        // Rechter Spieler
-        g.setColor(new Color(230, 125, 100));
-        g.fillOval(x + 62, y + 20, 32, 32);
-        g.fillRoundRect(x + 55, y + 55, 48, 38, 15, 15);
-
-    }
-}
+        g2.dispose(); // Gibt die verwendeten Zeichenressourcen frei.
+    } // Beendet die Methode paintComponent.
+} // Beendet die Klasse MainMenu.
