@@ -1,6 +1,7 @@
 package Main;
 
 import GameWindow.GamePanel;
+import core.KeyInputs;
 
 import javax.swing.JFrame;
 
@@ -18,5 +19,7 @@ public class Main {
         GamePanel gamePanel = new GamePanel();
         window.add(gamePanel);
         window.pack();
+
+        gamePanel.startGameThread();
     }
 }
